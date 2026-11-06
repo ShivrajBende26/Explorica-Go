@@ -1,0 +1,130 @@
+extends base
+include _eventCard
+
+block content
+  main.main.home-main
+    section.home-hero.home-hero--simple(aria-labelledby='home-title')
+      .home-hero__frame
+        .home-hero__copy
+          p.home-hero__eyebrow Travel at your own pace
+          h1#home-title Find a place
+            br
+            span that feels like yours.
+          p.home-hero__intro Thoughtful small-group journeys, local stories, and time to enjoy the way there.
+          .home-hero__actions
+            a.btn.btn--green(href='/tours') Browse journeys
+            a.home-text-link(href='/events') Explore events
+
+    section.home-section.home-tours(id='tours' aria-labelledby='tours-title')
+      .home-section__heading
+        div
+          p.home-kicker Find your next journey
+          h2#tours-title Good trips start here
+        p.home-section__intro Browse thoughtful routes, compare the details, and find a trip that feels right.
+
+      if tours.length
+        .home-tour-tools
+          label.home-tour-field(for='tour-search')
+            span.home-tour-field__label Search journeys
+            input#tour-search.home-tour-input(type='search' placeholder='Try a place or experience' autocomplete='off')
+          label.home-tour-field(for='tour-sort')
+            span.home-tour-field__label Sort by
+            select#tour-sort.home-tour-input
+              option(value='recommended') Recommended
+              option(value='price-asc') Price: low to high
+              option(value='price-desc') Price: high to low
+              option(value='rating') Top rated
+              option(value='duration') Shortest duration
+          p.home-tour-count#tour-filter-summary(aria-live='polite')= `Showing all ${tours.length} ${tours.length === 1 ? 'journey' : 'journeys'}`
+
+        .card-container.home-card-container
+          each tour in tours
+            article.card.home-card(data-tour-card data-tour-search=[tour.name, tour.summary, tour.startLocation.description].join(' ') data-tour-price=tour.price data-tour-rating=tour.ratingsAverage data-tour-duration=tour.duration)
+              .card__header
+                .card__picture
+                  .card__picture-overlay &nbsp;
+                  img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=tour.name)
+                h3.heading-tertirary
+                  span= tour.name
+                if tour.isSample
+                  span.home-card__sample Sample trip
+
+              .card__details
+                h4.card__sub-heading= `${tour.duration} days · Small group`
+                p.card__text= tour.summary
+                .card__data
+                  svg.card__icon
+                    use(xlink:href='/img/icons.svg#icon-map-pin')
+                  span= tour.startLocation.description
+                .card__data
+                  svg.card__icon
+                    use(xlink:href='/img/icons.svg#icon-calendar')
+                  span= tour.startDates.length ? tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'}) : 'Dates to be announced'
+                .card__data
+                  svg.card__icon
+                    use(xlink:href='/img/icons.svg#icon-flag')
+                  span= `${tour.locations.length} stops`
+                .card__data
+                  svg.card__icon
+                    use(xlink:href='/img/icons.svg#icon-user')
+                  span= `${tour.maxGroupSize} people`
+
+              .card__footer
+                p
+                  span.card__footer-value= `$${tour.price}`
+                  |
+                  span.card__footer-text per person
+                p.card__ratings
+                  span.card__footer-value= tour.ratingsAverage
+                  |
+                  span.card__footer-text= `rating (${tour.ratingsQuantity})`
+                a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`)= tour.isSample ? 'View sample' : 'Discover'
+
+        nav.home-tour-pagination(aria-label='Journey pages' data-tour-pagination)
+        p.home-tour-count.home-tour-count--note Sample journeys are browse-only until they are added to the booking catalogue.
+        a.home-text-link.home-events__all(href='/tours') Browse all journeys
+
+        p.home-filter-empty.home-empty(role='status' hidden)
+          span No journeys match your search. Try another place or experience.
+      else
+        .home-empty
+          span.home-empty__icon ✳
+          h3 A little quiet before the next adventure.
+          p New journeys are being prepared. Please check back soon.
+
+    if events && events.length
+      section.home-section.home-events(id='events' aria-labelledby='events-title')
+        .home-section__heading
+          div
+            p.home-kicker Mark your calendar
+            h2#events-title Gather, learn, and explore
+          p.home-section__intro A few community-calendar highlights to inspire your next journey.
+        .event-grid.event-grid--preview
+          each event in events
+            +eventCard(event)
+        a.home-text-link.home-events__all(href='/events') Explore all events
+
+    section.home-story(id='about' aria-labelledby='about-title')
+      .home-story__stamp
+        span Small groups
+        strong Big
+        span memories
+      .home-story__content
+        p.home-kicker A different way to go
+        h2#about-title Not just a trip.
+          br
+          span A feeling you bring home.
+        p We believe the best travel happens when there’s time to look around, meet the people who make a place special, and follow a path that feels like your own.
+        a.home-text-link(href='#tours') Find your kind of journey
+
+    section.home-contact(id='contact' aria-labelledby='contact-title')
+      div
+        p.home-kicker Need a hand?
+        h2#contact-title Let's get you going.
+        p Sign in to keep track of your bookings, or explore the journeys to find the right fit.
+      .home-contact__actions
+        if user
+          a.btn.btn--dark(href='/my-tours') View my trips
+        else
+          a.btn.btn--dark(href='/login') Sign in
+        a.home-text-link(href='/#tours') Browse journeys

@@ -1,0 +1,53 @@
+extends base
+include _eventCard
+
+block content
+  main.main.events-main
+    section.events-intro(aria-labelledby='events-title')
+      p.home-kicker The community calendar
+      h1#events-title Find your next gathering
+      p.events-intro__copy Discover tourism conversations, hands-on workshops, and local celebrations around the world.
+      p.events-intro__note These sample listings are for demonstration. Confirm dates and details with organizers before making plans.
+
+    section.events-listing(aria-label='Browse events')
+      form.events-filters(action='/events' method='get')
+        label.home-tour-field(for='event-search')
+          span.home-tour-field__label Search events
+          input#event-search.home-tour-input(type='search' name='q' value=search placeholder='Search a name, place, or topic')
+        label.home-tour-field(for='event-category')
+          span.home-tour-field__label Category
+          select#event-category.home-tour-input(name='category')
+            option(value='') All categories
+            each item in categories
+              option(value=item selected=category === item)= item
+        button.btn.btn--green(type='submit') Search events
+
+      p.events-result-count(aria-live='polite')= `${resultCount} ${resultCount === 1 ? 'event' : 'events'} found · Page ${page} of ${pageCount}`
+
+      if events.length
+        .event-grid
+          each event in events
+            +eventCard(event)
+      else
+        .home-empty(role='status')
+          span.home-empty__icon ✳
+          h2 No events found
+          p Try a different keyword or choose another category.
+
+      if pageCount > 1
+        nav.event-pagination(aria-label='Event pages')
+          if previousUrl
+            a.event-pagination__step(href=previousUrl rel='prev' aria-label='Previous page') Previous
+          else
+            span.event-pagination__step.is-disabled Previous
+          each item in pages
+            a.event-pagination__page(
+              href=item.url
+              aria-current=item.active ? 'page' : undefined
+              aria-label=`Page ${item.number}`
+              class=item.active ? 'is-active' : ''
+            )= item.number
+          if nextUrl
+            a.event-pagination__step(href=nextUrl rel='next' aria-label='Next page') Next
+          else
+            span.event-pagination__step.is-disabled Next

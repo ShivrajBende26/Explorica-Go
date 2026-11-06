@@ -1,0 +1,71 @@
+extends base
+
+block content
+  main.main.events-main.tours-main
+    section.events-intro(aria-labelledby='tours-title')
+      p.home-kicker The journey collection
+      h1#tours-title Go somewhere good
+      p.events-intro__copy Browse small-group trips, find a place that speaks to you, and compare at your own pace.
+
+    section.events-listing(aria-label='Browse tours')
+      form.events-filters(action='/tours' method='get')
+        label.home-tour-field(for='tour-directory-search')
+          span.home-tour-field__label Search journeys
+          input#tour-directory-search.home-tour-input(type='search' name='q' value=search placeholder='Search a place or experience')
+        label.home-tour-field(for='tour-directory-sort')
+          span.home-tour-field__label Sort by
+          select#tour-directory-sort.home-tour-input(name='sort')
+            option(value='recommended' selected=sort === 'recommended') Recommended
+            option(value='price-asc' selected=sort === 'price-asc') Price: low to high
+            option(value='price-desc' selected=sort === 'price-desc') Price: high to low
+            option(value='rating' selected=sort === 'rating') Top rated
+            option(value='duration' selected=sort === 'duration') Shortest duration
+        button.btn.btn--green(type='submit') Find journeys
+
+      p.events-result-count(aria-live='polite')= `${resultCount} ${resultCount === 1 ? 'journey' : 'journeys'} · Page ${page} of ${pageCount}`
+
+      if tours.length
+        .tour-list
+          each tour in tours
+            article.tour-list-card
+              a.tour-list-card__image-link(href=`/tour/${tour.slug}` aria-label=`Explore ${tour.name}`)
+                img.tour-list-card__image(src=`/img/tours/${tour.imageCover}` alt='')
+              .tour-list-card__content
+                p.tour-list-card__meta
+                  span= `${tour.duration} days · Small group`
+                  if tour.isSample
+                    span.tour-list-card__sample Sample trip
+                h2
+                  a(href=`/tour/${tour.slug}`)= tour.name
+                p.tour-list-card__summary= tour.summary
+                .tour-list-card__details
+                  span= tour.startLocation.description
+                  span= `${tour.locations.length} ${tour.locations.length === 1 ? 'stop' : 'stops'}`
+                  span= `${tour.maxGroupSize} travelers max`
+              .tour-list-card__action
+                p.tour-list-card__price= `$${tour.price}`
+                p.per-person per person
+                a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`)= tour.isSample ? 'View sample' : 'View journey'
+      else
+        .home-empty(role='status')
+          span.home-empty__icon ✳
+          h2 No journeys found
+          p Try a different place or experience.
+
+      if pageCount > 1
+        nav.event-pagination(aria-label='Journey pages')
+          if previousUrl
+            a.event-pagination__step(href=previousUrl rel='prev' aria-label='Previous page') Previous
+          else
+            span.event-pagination__step.is-disabled Previous
+          each item in pages
+            a.event-pagination__page(
+              href=item.url
+              aria-current=item.active ? 'page' : undefined
+              aria-label=`Page ${item.number}`
+              class=item.active ? 'is-active' : ''
+            )= item.number
+          if nextUrl
+            a.event-pagination__step(href=nextUrl rel='next' aria-label='Next page') Next
+          else
+            span.event-pagination__step.is-disabled Next

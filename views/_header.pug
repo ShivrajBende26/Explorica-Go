@@ -1,0 +1,21 @@
+header.header.site-header
+  nav.nav.nav--tours.site-nav.site-nav--primary(aria-label='Main navigation')
+    a.nav__el(href='/') Home
+    a.nav__el(href='/tours') Tours
+    a.nav__el(href='/events') Events
+    a.nav__el(href='/#about') Our story
+    a.nav__el(href='/#contact') Contact
+
+  a.site-brand(href='/' aria-label='BookTheVibe home')
+    span.site-brand__mark B
+    span.site-brand__name BookTheVibe
+
+  nav.nav.nav--user.site-nav.site-nav--account(aria-label='Account navigation')
+    if user
+      a.nav__el.nav__el--logout Log out
+      a.nav__el.site-user(href='/me')
+        img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+        span= user.name.split(' ')[0]
+    else
+      a.nav__el(href='/login') Log in
+      a.nav__el.nav__el--cta(href='/signup') Sign up

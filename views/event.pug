@@ -1,0 +1,38 @@
+extends base
+
+block content
+  main.main.event-detail-main
+    a.event-back-link(href='/events') ← Back to all events
+
+    article.event-detail
+      .event-detail__image
+        img(src=`/img/tours/${event.image}` alt='')
+        span.event-detail__image-label Sample community listing
+      .event-detail__content
+        p.home-kicker= event.category
+        h1= event.title
+        p.event-detail__summary= event.summary
+
+        .event-facts
+          .event-facts__item
+            span.event-facts__label Date
+            strong= event.startDate.toLocaleDateString('en', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'})
+          .event-facts__item
+            span.event-facts__label Time
+            - const startTime = event.startDate.toLocaleTimeString('en', {hour: 'numeric', minute: '2-digit', timeZone: 'UTC'})
+            - const endTime = event.endDate.toLocaleTimeString('en', {hour: 'numeric', minute: '2-digit', timeZone: 'UTC'})
+            strong= `${startTime}–${endTime} UTC`
+          .event-facts__item
+            span.event-facts__label Location
+            strong= event.location
+          .event-facts__item
+            span.event-facts__label Listed by
+            strong= event.organizer
+
+        h2 About this gathering
+        p.event-detail__description= event.description
+        p.event-detail__notice Event details in this sample calendar are illustrative, not confirmed. Please verify the official schedule, venue, registration, and accessibility information with the organizer.
+
+        .event-detail__actions
+          a.btn.btn--green(href='/events') Browse more events
+          a.home-text-link(href='/#tours') Find a journey

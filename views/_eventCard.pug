@@ -1,0 +1,15 @@
+mixin eventCard(event)
+  article.event-card
+    a.event-card__image-link(href=`/events/${event.slug}` aria-label=`Read about ${event.title}`)
+      img.event-card__image(src=`/img/tours/${event.image}` alt='')
+    .event-card__body
+      p.event-card__meta
+        span.event-card__category= event.category
+        span.event-card__sample Sample listing
+      h3.event-card__title
+        a(href=`/events/${event.slug}`)= event.title
+      p.event-card__summary= event.summary
+      .event-card__footer
+        span= event.startDate.toLocaleDateString('en', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'})
+        span= event.location
+        a.event-card__link(href=`/events/${event.slug}` aria-label=`View ${event.title}`) View event
