@@ -3,24 +3,41 @@ include _eventCard
 
 block content
   main.main.home-main
-    section.home-hero.home-hero--simple(aria-labelledby='home-title')
+    section.home-hero.home-hero--cinematic(aria-labelledby='home-title')
+      if tours.length
+        img.home-hero__image(src=`/img/tours/${tours[0].imageCover}` alt=`A view from ${tours[0].name}`)
+      else
+        img.home-hero__image(src='/img/tours/tour-1-cover.jpg' alt='A scenic landscape ready to explore')
+      .home-hero__shade
       .home-hero__frame
         .home-hero__copy
-          p.home-hero__eyebrow Travel at your own pace
-          h1#home-title Find a place
+          p.home-hero__eyebrow A world of possibility
+          h1#home-title There's more
             br
-            span that feels like yours.
-          p.home-hero__intro Thoughtful small-group journeys, local stories, and time to enjoy the way there.
+            span out there.
+          p.home-hero__intro From iconic city streets to quiet coastlines, discover journeys across the places you've always wanted to see.
           .home-hero__actions
             a.btn.btn--green(href='/tours') Browse journeys
-            a.home-text-link(href='/events') Explore events
+            a.home-text-link(href='/events') See what's happening
+      a.home-hero__scroll(href='#tours' aria-label='Scroll to explore journeys')
+        span Start exploring
+        span.home-hero__scroll-mark(aria-hidden='true') ↓
+      .home-hero__caption
+        if tours.length
+          div
+            span.home-hero__caption-kicker Featured journey
+            span.home-hero__caption-place= tours[0].startLocation.description
+        else
+          div
+            span.home-hero__caption-kicker Your next story starts here
+            span.home-hero__caption-place Go somewhere good
 
     section.home-section.home-tours(id='tours' aria-labelledby='tours-title')
       .home-section__heading
         header
-          p.home-kicker Find your next journey
-          h2#tours-title Good trips start here
-        p.home-section__intro Browse thoughtful routes, compare the details, and find a trip that feels right.
+          p.home-kicker Destinations, near and far
+          h2#tours-title Your world starts here
+        p.home-section__intro Browse memorable journeys, find a new favorite city, and plan your next escape at your own pace.
 
       if tours.length
         .home-tour-tools
@@ -110,11 +127,11 @@ block content
         strong Big
         span memories
       .home-story__content
-        p.home-kicker A different way to go
+        p.home-kicker Meet Explorica Go
         h2#about-title Not just a trip.
           br
           span A feeling you bring home.
-        p We believe the best travel happens when there’s time to look around, meet the people who make a place special, and follow a path that feels like your own.
+        p From big-city energy to tucked-away local favorites, we make it easier to find your kind of journey and see more of the world.
         a.home-text-link(href='#tours') Find your kind of journey
 
     section.home-contact(id='contact' aria-labelledby='contact-title')

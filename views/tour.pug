@@ -78,11 +78,12 @@ block content
 
     section.section-cta
       .cta
-        .cta__img.cta__img--logo(aria-hidden='true') B
+        .cta__img.cta__img--logo(aria-hidden='true')
+          img(src='/img/explorica-go-favicon.png' alt='')
         img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1] || tour.imageCover}`, alt=`${tour.name} tour`)
         img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2] || tour.imageCover}`, alt=`${tour.name} scenery`)
         .cta__content
-          h2.heading-secondary Ready to go somewhere good?
+          h2.heading-secondary Ready to explore somewhere new?
           p.cta__text= `${tour.duration} days. One memorable journey. Make it yours today.`
 
           if tour.isSample
