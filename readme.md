@@ -35,17 +35,14 @@ Mongoose.
    your Stripe account. Never put Stripe keys in chat or source control.
 6. To display tour maps, create a restricted Mapbox public token, allow your
    local and production site origins, and set it as `MAPBOX_ACCESS_TOKEN`.
-7. For development email, create a Mailtrap Email Testing inbox and copy its
-   SMTP username and password into `EMAIL_USERNAME` and `EMAIL_PASSWORD`.
-   The example uses `sandbox.smtp.mailtrap.io`, port `2525`, and
-   `EMAIL_SECURE=false`. `EMAIL_LOGO_URL` is optional and must be publicly
-   reachable by email clients. If signup succeeds but the welcome email fails,
-   or password reset cannot send mail, verify that the SMTP credentials are
-   current and belong to that Mailtrap inbox. Check them in local `config.env`;
-   never paste them into chat or commit them. Mailtrap Email Testing captures
-   messages in its testing inbox; it does not deliver them to real user
-   inboxes. To deliver password-reset emails to users, configure a real SMTP
-   provider or Mailtrap Email Sending with a verified sending domain.
+7. For local email, configure Postmark SMTP with its access key/password and
+   `smtp.postmarkapp.com` on port `587`. Render Free blocks outbound SMTP, so
+   configure a Postmark server API token as `POSTMARK_SERVER_TOKEN` when hosting
+   there; the app uses Postmark's HTTPS API whenever that token is set and falls
+   back to SMTP locally. Set `EMAIL_FROM` to a confirmed Postmark sender address.
+   `EMAIL_LOGO_URL` is optional and must be publicly reachable by email clients.
+   Keep tokens in local `config.env` or hosting-provider settings, never in chat
+   or source control.
 8. When deploying behind a reverse proxy, set `TRUST_PROXY_HOPS` to the exact
    number of trusted proxies in front of this app. Leave it at `0` for direct
    local development.
@@ -69,14 +66,26 @@ and individual event detail pages. Its 18 clearly labeled sample listings live
 in `data/events.js`; dates, schedules, and locations are illustrative and must
 be confirmed with event organizers before publication.
 
-## Deployment and source-code privacy
+## Free deployment on Render
 
-Deploy this project as a Node.js web service, not as a static site. Start it
-with `npm run start:prod`, set the required configuration values in the
-hosting provider's environment-variable settings, and keep the project root
-private. The Express app serves browser assets from `public`; do not configure
-the provider to publish the repository root or place `config.env` inside
-`public`. The local `config.env` file is excluded from Git.
+The root `render.yaml` configures a free Node.js web service. Connect this
+repository to Render and create a Blueprint from that file. Render prompts for
+the MongoDB URI/password, Stripe test secret, Postmark server API token, and
+confirmed sender address. Use an Atlas connection string with the literal
+`<PASSWORD>` placeholder in the URI and enter the database password separately.
+Set Atlas network access to allow Render's connections.
+
+After the first deploy, create a Stripe webhook endpoint for
+`https://<your-service>.onrender.com/webhook-checkout`, subscribe to
+`checkout.session.completed` and
+`checkout.session.async_payment_succeeded`, then set the endpoint's signing
+secret as `STRIPE_WEBHOOK_SECRET` in Render. Do not use the local Stripe CLI
+signing secret for the deployed endpoint.
+
+Render Free services spin down after 15 minutes without traffic, may take about
+a minute to wake, and have monthly usage limits. This is suitable for a demo,
+not an always-on production booking service. The local `config.env` is excluded
+from Git; never publish it or place it under `public`.
 
 ## Postman API
 

@@ -1874,7 +1874,7 @@ body {
   font-size: clamp(3rem, 4vw, 4.8rem);
 }
 
-.home-contact > div > p:last-child {
+.home-contact > header > p:last-child {
   max-width: 61rem;
   margin-top: 1rem;
   color: var(--vibe-muted);

@@ -12,9 +12,7 @@ module.exports = class Email {
       process.env.EMAIL_LOGO_URL.toLowerCase() !== 'none'
         ? process.env.EMAIL_LOGO_URL
         : undefined;
-    this.from =
-      process.env.EMAIL_FROM ||
-      `BookTheVibe <${process.env.EMAIL_USERNAME || 'no-reply@example.com'}>`;
+    this.from = process.env.EMAIL_FROM || 'BookTheVibe <no-reply@example.com>';
   }
 
   newTransport() {
@@ -58,8 +56,37 @@ module.exports = class Email {
       text: htmlToText.convert(html)
     };
 
-    // 3) Create a transport and send email
+    if (process.env.POSTMARK_SERVER_TOKEN) {
+      await this.sendWithPostmarkApi(mailOptions);
+      return;
+    }
+
     await this.newTransport().sendMail(mailOptions);
+  }
+
+  async sendWithPostmarkApi(mailOptions) {
+    const response = await fetch('https://api.postmarkapp.com/email', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Postmark-Server-Token': process.env.POSTMARK_SERVER_TOKEN
+      },
+      body: JSON.stringify({
+        From: mailOptions.from,
+        To: mailOptions.to,
+        Subject: mailOptions.subject,
+        HtmlBody: mailOptions.html,
+        TextBody: mailOptions.text,
+        MessageStream: process.env.POSTMARK_MESSAGE_STREAM || 'outbound'
+      })
+    });
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok || !result || result.ErrorCode !== 0) {
+      const message = result && result.Message ? result.Message : response.statusText;
+      throw new Error(`Postmark API request failed (${response.status}): ${message}`);
+    }
   }
 
   async sendWelcome() {
