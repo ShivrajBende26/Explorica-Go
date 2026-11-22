@@ -1,4 +1,4 @@
-# BookTheVibe
+# Explorica GO
 
 Travel and tour-booking application built with Node.js, Express, MongoDB, and
 Mongoose.
